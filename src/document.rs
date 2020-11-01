@@ -2,7 +2,7 @@ use pulldown_cmark::{CowStr, Event, html, Options, Parser, Tag};
 use regex::Regex;
 
 #[derive(Debug, PartialEq)]
-struct HashTag(String);
+pub struct HashTag(String);
 
 fn parse_hash_tag(mut callback: impl FnMut(HashTag)) -> impl FnMut(Event) -> Vec<Event> {
     let mut in_a_link = false;
@@ -33,7 +33,7 @@ fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item=Even
     Parser::new_ext(input, options).flat_map(parse_hash_tag(callback))
 }
 
-fn transform(input: &str) -> (String, Vec<HashTag>) {
+pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
     let mut out = String::new();
     let mut hashtags = Vec::new();
     html::push_html(&mut out, parser(input, |t| hashtags.push(t)));

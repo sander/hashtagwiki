@@ -9,3 +9,5 @@ edition = "2018"
 [dependencies]
 pulldown-cmark = "0.8.0"
 regex = { version = "1.4.1" }
+tokio = { version = "0.2", features = ["full"] }
+warp = "0.2.5"
