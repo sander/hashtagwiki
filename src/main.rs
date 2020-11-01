@@ -10,7 +10,6 @@ async fn main() {
     let wiki = warp::path!("wiki" / String)
         .map(|name| {
             let path = Path::new("wiki/name").with_file_name(name).with_extension("md");
-            println!("Path: {:?}", path);
             match fs::read_to_string(path) {
                 Ok(doc) => {
                     let (transformed, hashtags) = document::transform(&doc);
@@ -19,8 +18,11 @@ async fn main() {
                 Err(_) => Response::builder().status(warp::http::StatusCode::NOT_FOUND).body("Not found".to_string())
             }
         });
+    let static_dir = warp::path("static").and(warp::fs::dir("./static/"));
 
-    warp::serve(wiki)
+    let routes = wiki.or(static_dir);
+
+    warp::serve(routes)
         .run(([127, 0, 0, 1], 3030))
         .await;
 }

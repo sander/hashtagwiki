@@ -1,0 +1,12 @@
+body {
+  font-family: system-ui;
+  background: #ddd;
+  line-height: 1.2;
+  margin: 1em;
+  color: #111;
+}
+
+span[property='dc:references'] {
+  background: #ccc;
+  cursor: pointer;
+}

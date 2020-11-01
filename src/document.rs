@@ -1,5 +1,6 @@
 use pulldown_cmark::{CowStr, Event, html, Options, Parser, Tag};
 use regex::Regex;
+use std::ops::Add;
 
 #[derive(Debug, PartialEq)]
 pub struct HashTag(String);
@@ -34,9 +35,13 @@ fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item=Even
 }
 
 pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
-    let mut out = String::new();
+    let mut out = String::from(
+        "<html prefix=\"dc: http://purl.org/dc/elements/1.1/\">
+<link rel=\"stylesheet\" href=\"/static/wiki.css\">
+");
     let mut hashtags = Vec::new();
     html::push_html(&mut out, parser(input, |t| hashtags.push(t)));
+    out.push_str("\n<script src=\"/static/wiki.js\"></script>");
     (out, hashtags)
 }
 
