@@ -1,7 +1,8 @@
 [package]
-name = "wiki-server"
+name = "hashtagwiki"
 version = "0.1.0"
-authors = ["Sander Dijkhuis <sander.dijkhuis@cleverbase.com>"]
+authors = ["Sander Dijkhuis <mail@sanderdijkhuis.nl>"]
+license = "MIT"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
