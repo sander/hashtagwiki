@@ -37,7 +37,11 @@ async fn get_hashtag_info(name: String) -> Result<impl warp::Reply, warp::Reject
             match pages_containing(&tag) {
                 Ok(pages) => {
                     let mut result = HashMap::new();
-                    result.insert("wiki", pages);
+                    result.insert("wiki", pages.into_iter().map(|s| {
+                        let mut entry = HashMap::new();
+                        entry.insert("name", s);
+                        entry
+                    }).collect::<Vec<_>>());
                     Ok(warp::reply::json(&result))
                 }
                 Err(e) => Err(warp::reject::custom(IOError))

@@ -23,7 +23,7 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
       if (response.status === 200) {
         const { wiki } = await response.json();
         const ownName = location.pathname.match("([^/]+)(\\.[^.]+)?$")[1];
-        const otherPages = wiki.filter((s) => s !== ownName);
+        const otherPages = wiki.filter(({ name }) => name !== ownName);
 
         popup.classList.remove("hashtag__popup--loading");
 
@@ -40,7 +40,7 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
           popup.innerHTML = "";
           popup.appendChild(ul);
 
-          otherPages.forEach((name) => {
+          otherPages.forEach(({ name }) => {
             const li = document.createElement("li");
             const a = document.createElement("a");
 
