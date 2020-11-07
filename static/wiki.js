@@ -22,8 +22,8 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
       const response = await fetch(`../hashtag/${name.substr(1)}.json`);
       if (response.status === 200) {
         const { wiki } = await response.json();
-        const ownName = location.pathname.match("([^/]+)(\\.[^.]+)?$")[1];
-        const otherPages = wiki.filter(({ name }) => name !== ownName);
+        const ownId = location.pathname.match("([^/]+)(\\.[^.]+)?$")[1];
+        const otherPages = wiki.filter(({ id }) => id !== ownId);
 
         popup.classList.remove("hashtag__popup--loading");
 
@@ -40,7 +40,7 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
           popup.innerHTML = "";
           popup.appendChild(ul);
 
-          otherPages.forEach(({ name }) => {
+          otherPages.forEach(({ id }) => {
             const li = document.createElement("li");
             const a = document.createElement("a");
 
@@ -49,8 +49,8 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
             li.classList.add("hashtag__list-item");
             li.appendChild(a);
 
-            a.innerText = name;
-            a.href = name;
+            a.innerText = id;
+            a.href = id;
             a.classList.add("hashtag__list-link");
           });
         }
