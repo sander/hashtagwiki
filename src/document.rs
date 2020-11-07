@@ -80,13 +80,13 @@ mod tests {
     #[test]
     fn can_extract_hashtags() {
         let s = "foo #bar #baz qux";
-        let tags = extract_hashtags(s);
-        assert_eq!(tags.get(0), Some(&Parsed::ParsedText(CowStr::from("foo "))));
-        assert_eq!(tags.get(1), Some(&Parsed::ParsedHashTag(CowStr::from("#bar"))));
-        assert_eq!(tags.get(2), Some(&Parsed::ParsedText(CowStr::from(" "))));
-        assert_eq!(tags.get(3), Some(&Parsed::ParsedHashTag(CowStr::from("#baz"))));
-        assert_eq!(tags.get(4), Some(&Parsed::ParsedText(CowStr::from(" qux"))));
-        assert_eq!(tags.len(), 5);
+        let tokens = extract_hashtags(s);
+        assert_eq!(tokens.get(0), Some(&Parsed::ParsedText(CowStr::from("foo "))));
+        assert_eq!(tokens.get(1), Some(&Parsed::ParsedHashTag(CowStr::from("#bar"))));
+        assert_eq!(tokens.get(2), Some(&Parsed::ParsedText(CowStr::from(" "))));
+        assert_eq!(tokens.get(3), Some(&Parsed::ParsedHashTag(CowStr::from("#baz"))));
+        assert_eq!(tokens.get(4), Some(&Parsed::ParsedText(CowStr::from(" qux"))));
+        assert_eq!(tokens.len(), 5);
     }
 
     #[test]
