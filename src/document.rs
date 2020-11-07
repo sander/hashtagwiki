@@ -44,6 +44,7 @@ pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
     let mut hashtags = Vec::new();
     html::push_html(&mut out, parser(input, |t| hashtags.push(t)));
     out.push_str("\n<script src=\"/static/wiki.js\"></script>");
+    out.push_str("\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>");
     (out, hashtags)
 }
 

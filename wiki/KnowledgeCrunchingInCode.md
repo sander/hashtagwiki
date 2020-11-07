@@ -4,8 +4,14 @@
 
 ## Examples
 
-- https://github.com/SemanticBeeng/fpinscalabe
+- [GitHub: SemanticBeeng/fpinscalabe](https://github.com/SemanticBeeng/fpinscalabe)
 
 ## Related
 
-- https://twitter.com/semanticbeeng/status/1322929673366573057
+<ul>
+<li><blockquote class="twitter-tweet">
+
+[Scala typed wiki-like way of sharing incremental knowledge](https://twitter.com/semanticbeeng/status/1322929673366573057)
+
+</blockquote>
+</ul>
