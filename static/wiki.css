@@ -1,6 +1,6 @@
 body {
   font-family: system-ui;
-  background: #ddd;
+  background: rgb(255, 250, 230);
   line-height: 1.2;
   margin: 1em;
   color: #111;
@@ -10,6 +10,12 @@ body,
 .hashtag__popup {
   font-size: 16px;
   font-weight: normal;
+}
+
+.hashtag__toggle,
+.hashtag__list-link,
+a {
+  color: #0052cc;
 }
 
 .hashtag__toggle {
@@ -47,7 +53,30 @@ body,
   margin: 1em;
 }
 
+.hashtag__popup--with-list {
+  padding: 0.5em;
+}
+
 .hashtag__popup--error {
   color: red;
   font-weight: bold;
+}
+
+.hashtag__popup--empty {
+  color: #aaa;
+}
+
+.hashtag__list {
+  margin: 0;
+  list-style: none;
+  padding: 0;
+}
+
+.hashtag__list-link {
+  display: block;
+  padding: 0.5em;
+}
+
+.hashtag__list-link:hover {
+  background: #efefef;
 }

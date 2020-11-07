@@ -21,8 +21,39 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
 
       const response = await fetch(`../hashtag/${name.substr(1)}.json`);
       if (response.status === 200) {
-        const json = await response.json();
-        popup.innerText = JSON.stringify(json, null, 2);
+        const { wiki } = await response.json();
+        const ownName = location.pathname.match("([^/]+)(\\.[^.]+)?$")[1];
+        const otherPages = wiki.filter((s) => s !== ownName);
+
+        popup.classList.remove("hashtag__popup--loading");
+
+        if (otherPages.length === 0) {
+          popup.classList.add("hashtag__popup--empty");
+
+          popup.innerText = "No other pages found with this hashtag";
+        } else {
+          const ul = document.createElement("ul");
+
+          ul.classList.add("hashtag__list");
+
+          popup.classList.add("hashtag__popup--with-list");
+          popup.innerHTML = "";
+          popup.appendChild(ul);
+
+          otherPages.forEach((name) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+
+            ul.appendChild(li);
+
+            li.classList.add("hashtag__list-item");
+            li.appendChild(a);
+
+            a.innerText = name;
+            a.href = name;
+            a.classList.add("hashtag__list-link");
+          });
+        }
       } else {
         popup.classList.remove("hashtag__popup--loading");
         popup.classList.add("hashtag__popup--error");
@@ -41,7 +72,7 @@ const prepareHashtag = (toggle) => {
 
   toggle.classList.add("hashtag__toggle");
   toggle.parentNode.insertBefore(wrapper, toggle);
-  toggle.addEventListener("click", () =>
+  toggle.addEventListener("mousedown", () =>
     toggleHashtagPopup({ wrapper, popup, name: toggle.innerText })
   );
 
