@@ -19,7 +19,7 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
       popup.classList.remove("hashtag__popup--fresh");
       popup.classList.add("hashtag__popup--loading");
 
-      const response = await fetch(`../hashtags/${name.substr(1)}.json`);
+      const response = await fetch(`../hashtag/${name.substr(1)}.json`);
       if (response.status === 200) {
         const json = await response.json();
         popup.innerText = JSON.stringify(json, null, 2);

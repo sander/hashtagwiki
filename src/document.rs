@@ -3,7 +3,7 @@ use regex::Regex;
 use std::ops::Add;
 
 #[derive(Debug, PartialEq)]
-pub struct HashTag(String);
+pub(crate) struct HashTag(pub String);
 
 fn parse_hash_tag(mut callback: impl FnMut(HashTag)) -> impl FnMut(Event) -> Vec<Event> {
     let mut in_a_link = false;
