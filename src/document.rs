@@ -36,7 +36,9 @@ fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item=Even
 
 pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
     let mut out = String::from(
-        "<html prefix=\"dc: http://purl.org/dc/elements/1.1/\">
+        "<!doctype html>\
+<html prefix=\"dc: http://purl.org/dc/elements/1.1/\">
+<meta charset=\"utf-8\">
 <link rel=\"stylesheet\" href=\"/static/wiki.css\">
 ");
     let mut hashtags = Vec::new();

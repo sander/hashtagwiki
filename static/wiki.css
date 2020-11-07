@@ -6,7 +6,48 @@ body {
   color: #111;
 }
 
-span[property='dc:references'] {
-  background: #ccc;
+body,
+.hashtag__popup {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.hashtag__toggle {
+  background: #fff;
   cursor: pointer;
+  padding: 1px 0.24em 2px;
+  border-radius: 3px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.hashtag--closed .hashtag__popup {
+  display: none;
+}
+
+.hashtag--open .hashtag__popup {
+  display: block;
+}
+
+.hashtag--open .hashtag__toggle {
+  box-shadow: inset rgba(9, 30, 66, 0.25) 0 1px 1px;
+  border: 1px solid #aaa;
+  background: #efefef;
+}
+
+.hashtag--closed .hashtag__toggle {
+  box-shadow: rgba(9, 30, 66, 0.25) 0 1px 1px, rgba(9, 30, 66, 0.13) 0 0 1px 1px;
+  border: 1px solid transparent;
+}
+
+.hashtag__popup {
+  padding: 1em;
+  background: #fff;
+  margin: 1em;
+}
+
+.hashtag__popup--error {
+  color: red;
+  font-weight: bold;
 }

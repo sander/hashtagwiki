@@ -12,3 +12,7 @@ A wiki engine that:
 - [ ] Have wiki.js create a modal rendering the JSON-LD content
 - [ ] Add an edit button running `open` on macOS
 - [ ] Render to static output files for serving from object storage
+
+## Credits
+
+- Hashtag popups inspired by De Correspondent [info cards by Momkai](https://www.momkai.com/cases/decorrespondent_platform)
