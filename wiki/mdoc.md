@@ -20,4 +20,4 @@ myLibrary.foo(42)
 
 The tool would replace `@VERSION` with the project version, type-check the `myLibrary.foo` call and render the execution result back into the #Markdown file.
 
-It would be even cooler if it allowed for inline references to #Scala objects. This could enable a combination between #wiki and #KnowledgeCrunchingInCode. Compare to #Laika’s support for [Linking to API Documentation](https://planet42.github.io/Laika/0.17/03-preparing-content/02-navigation.html#linking-to-api-documentation).
+It would be even cooler if it allowed for inline references to #Scala types: #TypeReferencesInNaturalLanguage. This could enable a combination between #wiki and #KnowledgeCrunchingInCode. Compare to #Laika’s support for [Linking to API Documentation](https://planet42.github.io/Laika/0.17/03-preparing-content/02-navigation.html#linking-to-api-documentation).
