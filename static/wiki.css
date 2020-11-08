@@ -91,3 +91,7 @@ code {
   font-size: 80%;
   border-radius: 3px;
 }
+
+pre code {
+  font-size: 100%;
+}
