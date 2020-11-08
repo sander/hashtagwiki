@@ -80,3 +80,17 @@ a {
 .hashtag__list-link:hover {
   background: #efefef;
 }
+
+pre,
+code {
+  font-family: "SFMono-Medium", "SF Mono", "Segoe UI Mono", "Roboto Mono",
+    "Ubuntu Mono", Menlo, Consolas, Courier, monospace;
+}
+
+pre {
+  background: rgb(244, 245, 247);
+  line-height: 1.66667;
+  padding: 0.5em;
+  font-size: 75%;
+  border-radius: 3px;
+}
