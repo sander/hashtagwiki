@@ -32,6 +32,10 @@ At the time of writing, it is not clear yet if any #IntegratedDevelopmentEnviron
 
 The only known compiler renders #HTML code documentation, not #book-s, #wiki-s or #BlogPost-s.
 
+### #mdoc
+
+Currently intended for compiling block-level examples, but could be extended to also compile inline #hyperlink-s.
+
 ### #SoyWiki
 
 [SoyWiki](http://danielchoi.com/software/soywiki.html) seems to provide the required features with “namespaced wiki words” and “automated global renaming of wiki words”.
