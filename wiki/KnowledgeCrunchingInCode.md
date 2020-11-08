@@ -15,3 +15,5 @@
 
 </blockquote>
 </ul>
+
+The #StronglyTyped part in this example seems to be about using #TypeReferencesInNaturalLanguage.
