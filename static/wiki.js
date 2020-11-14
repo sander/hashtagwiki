@@ -50,7 +50,7 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
             li.appendChild(a);
 
             a.innerText = id;
-            a.href = id;
+            a.href = `${id}.html`;
             a.classList.add("hashtag__list-link");
           });
         }
