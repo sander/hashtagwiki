@@ -94,7 +94,7 @@ mod tests {
     fn transforms_markdown() {
         let doc = "# #foo\n\nA #link [and](foo) [#link](#bar).";
         let (transformed, hashtags) = transform(doc);
-        assert_eq!(transformed, "<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n".to_string());
+        assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"/static/wiki.css\">\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"/static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
         assert_eq!(hashtags, vec![HashTag("#foo".to_string()), HashTag("#link".to_string())]);
     }
 }
