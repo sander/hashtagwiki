@@ -1,6 +1,5 @@
 use pulldown_cmark::{CowStr, Event, html, Options, Parser, Tag};
 use regex::Regex;
-use std::ops::Add;
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct HashTag(pub String);
