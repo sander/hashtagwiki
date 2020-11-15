@@ -1,5 +1,5 @@
 use std::{fs, io};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 use crate::document;
@@ -35,7 +35,8 @@ fn publish_output() -> io::Result<()> {
             let output_path = Path::new(OUTPUT_DIRECTORY).join(&path).with_extension("html");
             fs::write(&output_path, transformed)?;
             for tag in hashtags.into_iter() {
-                map.entry(tag.clone()).or_insert(vec![]).push(path.file_stem().unwrap().to_string_lossy().to_string());
+                let entry = map.entry(tag.clone()).or_insert(HashSet::new());
+                entry.insert(path.file_stem().unwrap().to_string_lossy().to_string());
             }
             Ok(())
         })
