@@ -1,5 +1,6 @@
 mod document;
 mod authoring;
+mod publishing;
 
 #[tokio::main]
 async fn main() {
