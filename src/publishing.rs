@@ -1,26 +1,57 @@
 use std::{fs, io};
+use std::collections::HashMap;
 use std::path::Path;
 
 use crate::document;
 
 const INPUT_DIRECTORY: &str = "wiki";
 const OUTPUT_DIRECTORY: &str = "out";
+const STATIC_DIRECTORY: &str = "static";
 
 fn prepare_output_directory() -> io::Result<()> {
     fs::remove_dir_all(OUTPUT_DIRECTORY).ok();
-    fs::create_dir_all(Path::new(OUTPUT_DIRECTORY).join("wiki"))
+    fs::create_dir_all(Path::new(OUTPUT_DIRECTORY).join("wiki"))?;
+    fs::create_dir_all(Path::new(OUTPUT_DIRECTORY).join("hashtag"))?;
+    fs::create_dir_all(Path::new(OUTPUT_DIRECTORY).join("static"))?;
+    let out = Path::new(OUTPUT_DIRECTORY);
+    for entry in fs::read_dir(STATIC_DIRECTORY)? {
+        let entry = entry?;
+        let path = entry.path();
+        if !path.is_dir() {
+            let target = out.join(&path);
+            fs::copy(&path, &target)?;
+        }
+    }
+    Ok(())
 }
 
 fn publish_output() -> io::Result<()> {
+    let mut map = HashMap::new();
     fs::read_dir(INPUT_DIRECTORY)?
         .map(|res| -> Result<_, io::Error> {
             let path = res?.path();
             let content = fs::read_to_string(&path)?;
             let (transformed, hashtags) = document::transform(&content);
             let output_path = Path::new(OUTPUT_DIRECTORY).join(&path).with_extension("html");
-            println!("Writing to {:?}", &output_path);
             fs::write(&output_path, transformed)?;
-            Ok((output_path, hashtags))
+            for tag in hashtags.into_iter() {
+                map.entry(tag.clone()).or_insert(vec![]).push(path.file_stem().unwrap().to_string_lossy().to_string());
+            }
+            Ok(())
+        })
+        .collect::<Result<Vec<_>, io::Error>>()?;
+    map.into_iter()
+        .map(|(tag, paths)| {
+            let json = serde_json::json!({
+                "wiki": paths.into_iter().map(|s| {
+                    let mut entry = HashMap::new();
+                    entry.insert("id", s);
+                    entry
+                }).collect::<Vec<_>>()
+            });
+            let output_path = Path::new(OUTPUT_DIRECTORY).join("hashtag").join(&tag.0[1..]).with_extension("json");
+            fs::write(&output_path, json.to_string())?;
+            Ok(())
         })
         .collect::<Result<Vec<_>, io::Error>>()?;
     Ok(())

@@ -1,7 +1,7 @@
 use pulldown_cmark::{CowStr, Event, html, Options, Parser, Tag};
 use regex::Regex;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub(crate) struct HashTag(pub String);
 
 fn parse_hash_tag(mut callback: impl FnMut(HashTag)) -> impl FnMut(Event) -> Vec<Event> {
@@ -38,11 +38,11 @@ pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
         "<!doctype html>\
 <html prefix=\"dc: http://purl.org/dc/elements/1.1/\">
 <meta charset=\"utf-8\">
-<link rel=\"stylesheet\" href=\"/static/wiki.css\">
+<link rel=\"stylesheet\" href=\"../static/wiki.css\">
 ");
     let mut hashtags = Vec::new();
     html::push_html(&mut out, parser(input, |t| hashtags.push(t)));
-    out.push_str("\n<script src=\"/static/wiki.js\"></script>");
+    out.push_str("\n<script src=\"../static/wiki.js\"></script>");
     out.push_str("\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>");
     (out, hashtags)
 }
@@ -93,7 +93,7 @@ mod tests {
     fn transforms_markdown() {
         let doc = "# #foo\n\nA #link [and](foo) [#link](#bar).";
         let (transformed, hashtags) = transform(doc);
-        assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"/static/wiki.css\">\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"/static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
+        assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"../static/wiki.css\">\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"../static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
         assert_eq!(hashtags, vec![HashTag("#foo".to_string()), HashTag("#link".to_string())]);
     }
 }
