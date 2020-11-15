@@ -21,7 +21,7 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: Publish
-      run: ./target/debug/wiki-server publish
+      run: cargo run -- publish
     - uses: actions/upload-artifact@v1
       with:
         name: wiki
