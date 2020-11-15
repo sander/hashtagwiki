@@ -13,15 +13,15 @@ fn prepare_output_directory() -> io::Result<()> {
 
 fn publish_output() -> io::Result<()> {
     fs::read_dir(INPUT_DIRECTORY)?
-        .map(|res| res.map(|e| -> Result<(), io::Error> {
-            let path = e.path();
+        .map(|res| -> Result<_, io::Error> {
+            let path = res?.path();
             let content = fs::read_to_string(&path)?;
             let (transformed, hashtags) = document::transform(&content);
             let output_path = Path::new(OUTPUT_DIRECTORY).join(&path).with_extension("html");
-            println!("Writing to {:?}", output_path);
-            fs::write(output_path, transformed)?;
-            Ok(())
-        }))
+            println!("Writing to {:?}", &output_path);
+            fs::write(&output_path, transformed)?;
+            Ok((output_path, hashtags))
+        })
         .collect::<Result<Vec<_>, io::Error>>()?;
     Ok(())
 }
