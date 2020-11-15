@@ -2,7 +2,7 @@
 
 ## Description
 
-A wiki engine uses hashtags for linking concepts. See [#HashtagWiki](wiki/WikiServer.md) and the related wiki pages for more detail.
+A wiki engine uses hashtags for linking concepts. See [#HashtagWiki](https://hashtagwiki.sanderdijkhuis.nl/wiki/WikiServer.html) ([source](wiki/WikiServer.md)) and the related wiki pages for more detail.
 
 ## How to run
 
