@@ -57,6 +57,11 @@ fn publish_output() -> io::Result<()> {
     Ok(())
 }
 
+pub(crate) fn run() {
+    prepare_output_directory().expect("Error preparing output directory");
+    publish_output().expect("Error publishing output");
+}
+
 #[cfg(test)]
 mod tests {
     use std::fs;

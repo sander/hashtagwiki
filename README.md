@@ -6,7 +6,9 @@ A wiki engine uses hashtags for linking concepts. See [#HashtagWiki](wiki/WikiSe
 
 ## How to run
 
-Use `cargo run` to run and then browse to http://localhost:3030/wiki/WikiServer.
+Use `cargo run -- author` to run the server and then browse to http://localhost:3030/wiki/WikiServer.
+
+Use `cargo run -- publish` to publish to the `out` directory.
 
 ## License
 
