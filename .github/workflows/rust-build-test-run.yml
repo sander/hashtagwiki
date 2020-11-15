@@ -33,7 +33,7 @@ jobs:
       #  with:
       #    name: wiki
       - name: Create test content
-        run: echo "hello world" > test.txt
+        run: echo "hello world" > test2.txt
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
