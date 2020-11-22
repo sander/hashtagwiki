@@ -39,12 +39,25 @@ pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
 <html prefix=\"dc: http://purl.org/dc/elements/1.1/\">
 <meta charset=\"utf-8\">
 <link rel=\"stylesheet\" href=\"../static/wiki.css\">
-");
+<title>");
+    out.push_str(&title(input));
+    out.push_str("</title>\n");
     let mut hashtags = Vec::new();
     html::push_html(&mut out, parser(input, |t| hashtags.push(t)));
     out.push_str("\n<script src=\"../static/wiki.js\"></script>");
     out.push_str("\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>");
     (out, hashtags)
+}
+
+fn title(s: &str) -> String {
+    let regex = Regex::new(r"^(# )?(?P<title>.*)").unwrap();
+    match regex.captures(s) {
+        Some(m) =>  match m.name("title").unwrap().as_str() {
+            "" => String::from("Untitled"),
+            s => String::from(s)
+        },
+        None => String::from("Untitled")
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -75,7 +88,7 @@ fn extract_hashtags(s: &str) -> Vec<Parsed> {
 mod tests {
     use pulldown_cmark::CowStr;
 
-    use crate::document::{extract_hashtags, Parsed, transform, HashTag};
+    use crate::document::{extract_hashtags, Parsed, transform, HashTag, title};
 
     #[test]
     fn can_extract_hashtags() {
@@ -93,7 +106,14 @@ mod tests {
     fn transforms_markdown() {
         let doc = "# #foo\n\nA #link [and](foo) [#link](#bar).";
         let (transformed, hashtags) = transform(doc);
-        assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"../static/wiki.css\">\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"../static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
+        assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"../static/wiki.css\">\n<title>#foo</title>\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"../static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
         assert_eq!(hashtags, vec![HashTag("#foo".to_string()), HashTag("#link".to_string())]);
+    }
+
+    #[test]
+    fn extracts_title() {
+        assert_eq!(title("# #foo\n\nContent"), "#foo");
+        assert_eq!(title("bar\n\nContent"), "bar");
+        assert_eq!(title(""), "Untitled");
     }
 }
