@@ -40,7 +40,7 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
           popup.innerHTML = "";
           popup.appendChild(ul);
 
-          otherPages.forEach(({ id }) => {
+          otherPages.forEach(({ id, title }) => {
             const li = document.createElement("li");
             const a = document.createElement("a");
 
@@ -49,7 +49,7 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
             li.classList.add("hashtag__list-item");
             li.appendChild(a);
 
-            a.innerText = id;
+            a.innerText = title;
             a.href = `${id}.html`;
             a.classList.add("hashtag__list-link");
           });

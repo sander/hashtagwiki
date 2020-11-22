@@ -49,7 +49,7 @@ pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
     (out, hashtags)
 }
 
-fn title(s: &str) -> String {
+pub(crate) fn title(s: &str) -> String {
     let regex = Regex::new(r"^(# )?(?P<title>.*)").unwrap();
     match regex.captures(s) {
         Some(m) =>  match m.name("title").unwrap().as_str() {

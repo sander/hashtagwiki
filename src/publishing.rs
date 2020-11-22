@@ -32,11 +32,12 @@ fn publish_output() -> io::Result<()> {
             let path = res?.path();
             let content = fs::read_to_string(&path)?;
             let (transformed, hashtags) = document::transform(&content);
+            let title = document::title(&content);
             let output_path = Path::new(OUTPUT_DIRECTORY).join(&path).with_extension("html");
             fs::write(&output_path, transformed)?;
             for tag in hashtags.into_iter() {
                 let entry = map.entry(tag.clone()).or_insert(HashSet::new());
-                entry.insert(path.file_stem().unwrap().to_string_lossy().to_string());
+                entry.insert((path.file_stem().unwrap().to_string_lossy().to_string(), title.clone()));
             }
             Ok(())
         })
@@ -46,7 +47,8 @@ fn publish_output() -> io::Result<()> {
             let json = serde_json::json!({
                 "wiki": paths.into_iter().map(|s| {
                     let mut entry = HashMap::new();
-                    entry.insert("id", s);
+                    entry.insert("id", s.0);
+                    entry.insert("title", s.1);
                     entry
                 }).collect::<Vec<_>>()
             });
