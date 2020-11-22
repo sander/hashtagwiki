@@ -1,10 +1,10 @@
-name: Rust app build and test and run
+name: Publish wiki
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
@@ -13,17 +13,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
-    - name: Publish
-      run: cargo run -- publish
-    - uses: actions/upload-artifact@v1
-      with:
-        name: wiki
-        path: out/
+      - uses: actions/checkout@v2
+      - run: curl -L https://github.com/sander/hashtagwiki/releases/download/v0.1.0/hashtagwiki-linux -o hashtagwiki
+      - run: chmod +x hashtagwiki
+      - run: ./hashtagwiki publish
+      - uses: actions/upload-artifact@v1
+        with:
+          name: wiki
+          path: out/
   deploy:
     needs: [build]
     runs-on: ubuntu-latest
