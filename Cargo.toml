@@ -1,6 +1,6 @@
 [package]
 name = "hashtagwiki"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Sander Dijkhuis <mail@sanderdijkhuis.nl>"]
 license = "MIT"
 edition = "2018"
