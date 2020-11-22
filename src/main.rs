@@ -7,7 +7,7 @@ mod publishing;
 #[tokio::main]
 async fn main() {
     let matches = App::new("HashtagWiki")
-        .version("0.1.0-SNAPSHOT")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("Sander Dijkhuis <mail@sanderdijkhuis.nl>")
         .subcommand(
             App::new("author")
