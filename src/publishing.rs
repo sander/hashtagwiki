@@ -31,7 +31,8 @@ fn publish_output() -> io::Result<()> {
         .map(|res| -> Result<_, io::Error> {
             let path = res?.path();
             let content = fs::read_to_string(&path)?;
-            let (transformed, hashtags) = document::transform(&content);
+            let id = document::PageId(String::from(path.file_stem().unwrap().to_string_lossy()));
+            let (transformed, hashtags) = document::transform(&content, id);
             let title = document::title(&content);
             let output_path = Path::new(OUTPUT_DIRECTORY).join(&path).with_extension("html");
             fs::write(&output_path, transformed)?;

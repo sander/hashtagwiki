@@ -12,7 +12,8 @@ fn pages_containing(hashtag: &HashTag) -> Result<Vec<String>, io::Error> {
     let dir = fs::read_dir(Path::new("wiki"))?;
     dir.map(|entry| {
         let path = entry?.path();
-        if document::transform(&fs::read_to_string(&path)?).1.contains(&hashtag) {
+        let id = document::PageId(String::from(path.file_stem().unwrap().to_string_lossy()));
+        if document::transform(&fs::read_to_string(&path)?, id).1.contains(&hashtag) {
             Ok(path.file_stem().map(|s| s.to_string_lossy().to_string()))
         } else {
             Ok(None)
@@ -54,10 +55,11 @@ async fn get_hashtag_info(name: String) -> Result<impl warp::Reply, warp::Reject
 pub async fn serve(address: impl Into<SocketAddr>) {
     let wiki = warp::path!("wiki" / String)
         .map(|name| {
-            let path = Path::new("wiki/name").with_file_name(name).with_extension("md");
+            let id = document::PageId(String::from(name));
+            let path = Path::new("wiki/name").with_file_name(id.0.clone()).with_extension("md");
             match fs::read_to_string(path) {
                 Ok(doc) => {
-                    let (transformed, _hashtags) = document::transform(&doc);
+                    let (transformed, _hashtags) = document::transform(&doc, id);
                     Response::builder().header("Content-Type", "text/html").body(transformed)
                 }
                 Err(_) => Response::builder().status(warp::http::StatusCode::NOT_FOUND).body("Not found".to_string())

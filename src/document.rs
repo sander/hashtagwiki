@@ -33,7 +33,9 @@ fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item=Even
     Parser::new_ext(input, options).flat_map(parse_hash_tag(callback))
 }
 
-pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
+pub(crate) struct PageId(pub String);
+
+pub(crate) fn transform(input: &str, page_id: PageId) -> (String, Vec<HashTag>) {
     let mut out = String::from(
         "<!doctype html>\
 <html prefix=\"dc: http://purl.org/dc/elements/1.1/\">
@@ -41,7 +43,9 @@ pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
 <link rel=\"stylesheet\" href=\"../static/wiki.css\">
 <title>");
     out.push_str(&title(input));
-    out.push_str("</title>\n");
+    out.push_str("</title>\n<nav class=\"toolbar\"><p><a href=\"https://github.com/sander/hashtagwiki/edit/main/wiki/");
+    out.push_str(&page_id.0);
+    out.push_str(".md\">Edit</a></p></nav>\n");
     let mut hashtags = Vec::new();
     html::push_html(&mut out, parser(input, |t| hashtags.push(t)));
     out.push_str("\n<script src=\"../static/wiki.js\"></script>");
@@ -52,7 +56,7 @@ pub(crate) fn transform(input: &str) -> (String, Vec<HashTag>) {
 pub(crate) fn title(s: &str) -> String {
     let regex = Regex::new(r"^(# )?(?P<title>.*)").unwrap();
     match regex.captures(s) {
-        Some(m) =>  match m.name("title").unwrap().as_str() {
+        Some(m) => match m.name("title").unwrap().as_str() {
             "" => String::from("Untitled"),
             s => String::from(s)
         },
@@ -88,7 +92,7 @@ fn extract_hashtags(s: &str) -> Vec<Parsed> {
 mod tests {
     use pulldown_cmark::CowStr;
 
-    use crate::document::{extract_hashtags, Parsed, transform, HashTag, title};
+    use crate::document::{extract_hashtags, HashTag, PageId, Parsed, title, transform};
 
     #[test]
     fn can_extract_hashtags() {
@@ -105,8 +109,8 @@ mod tests {
     #[test]
     fn transforms_markdown() {
         let doc = "# #foo\n\nA #link [and](foo) [#link](#bar).";
-        let (transformed, hashtags) = transform(doc);
-        assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"../static/wiki.css\">\n<title>#foo</title>\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"../static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
+        let (transformed, hashtags) = transform(doc, PageId(String::from("MyPage")));
+        assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"../static/wiki.css\">\n<title>#foo</title>\n<nav class=\"toolbar\"><p><a href=\"https://github.com/sander/hashtagwiki/edit/main/wiki/MyPage.md\">Edit</a></p></nav>\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"../static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
         assert_eq!(hashtags, vec![HashTag("#foo".to_string()), HashTag("#link".to_string())]);
     }
 

@@ -96,3 +96,23 @@ code {
 pre code {
   font-size: 100%;
 }
+
+.toolbar {
+  float: right;
+}
+.toolbar p {
+  margin: 0;
+}
+.toolbar a {
+  color: #42526e;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 32px;
+  padding: 0 8px;
+  border-radius: 3px;
+  margin-left: 6px;
+}
+.toolbar a:hover {
+  background-color: rgba(9, 30, 66, 0.08);
+}
