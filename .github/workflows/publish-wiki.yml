@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: curl -L https://github.com/sander/hashtagwiki/releases/download/v0.2.0/hashtagwiki-linux -o hashtagwiki
+      - run: curl -L https://github.com/sander/hashtagwiki/releases/download/v0.3.0/hashtagwiki-linux -o hashtagwiki
       - run: chmod +x hashtagwiki
       - run: ./hashtagwiki publish
       - uses: actions/upload-artifact@v1
