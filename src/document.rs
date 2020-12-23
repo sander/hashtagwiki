@@ -37,8 +37,11 @@ fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item = Ev
     Parser::new_ext(input, options).flat_map(parse_hash_tag(callback))
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub(crate) struct PageId(pub String);
+
+#[derive(Clone, PartialEq, Hash, Eq)]
+pub(crate) struct PageTitle(pub String);
 
 pub(crate) fn transform(input: &str, page_id: PageId) -> (String, Vec<HashTag>) {
     let mut out = String::from(
@@ -48,7 +51,7 @@ pub(crate) fn transform(input: &str, page_id: PageId) -> (String, Vec<HashTag>) 
 <link rel=\"stylesheet\" href=\"../static/wiki.css\">
 <title>",
     );
-    out.push_str(&title(input));
+    out.push_str(&title(input).0);
     out.push_str("</title>\n<nav class=\"toolbar\"><p><a href=\"https://github.com/sander/hashtagwiki/edit/main/wiki/");
     out.push_str(&page_id.0);
     out.push_str(".md\">Edit</a></p></nav>\n");
@@ -59,15 +62,15 @@ pub(crate) fn transform(input: &str, page_id: PageId) -> (String, Vec<HashTag>) 
     (out, hashtags)
 }
 
-pub(crate) fn title(s: &str) -> String {
+pub(crate) fn title(s: &str) -> PageTitle {
     let regex = Regex::new(r"^(# )?(?P<title>.*)").unwrap();
-    match regex.captures(s) {
+    PageTitle(match regex.captures(s) {
         Some(m) => match m.name("title").unwrap().as_str() {
             "" => String::from("Untitled"),
             s => String::from(s),
         },
         None => String::from("Untitled"),
-    }
+    })
 }
 
 #[derive(Debug, PartialEq)]

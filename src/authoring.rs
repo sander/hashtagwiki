@@ -8,7 +8,7 @@ use warp::{http::Response, Filter};
 use crate::document;
 use crate::document::HashTag;
 
-fn pages_containing(hashtag: &HashTag) -> Result<Vec<(document::PageId, String)>, io::Error> {
+fn pages_containing(hashtag: &HashTag) -> Result<Vec<(document::PageId, document::PageTitle)>, io::Error> {
     let dir = fs::read_dir(Path::new("wiki"))?;
     dir.map(|entry| {
         let path = entry?.path();
@@ -48,7 +48,7 @@ async fn get_hashtag_info(name: String) -> Result<impl warp::Reply, warp::Reject
                             .map(|s| {
                                 let mut entry = HashMap::new();
                                 entry.insert("id", s.0.0);
-                                entry.insert("title", s.1);
+                                entry.insert("title", s.1.0);
                                 entry
                             })
                             .collect::<Vec<_>>(),

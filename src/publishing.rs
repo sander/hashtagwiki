@@ -1,6 +1,6 @@
-use std::{fs, io};
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
+use std::{fs, io};
 
 use crate::document;
 
@@ -34,11 +34,16 @@ fn publish_output() -> io::Result<()> {
             let id = document::PageId(String::from(path.file_stem().unwrap().to_string_lossy()));
             let (transformed, hashtags) = document::transform(&content, id);
             let title = document::title(&content);
-            let output_path = Path::new(OUTPUT_DIRECTORY).join(&path).with_extension("html");
+            let output_path = Path::new(OUTPUT_DIRECTORY)
+                .join(&path)
+                .with_extension("html");
             fs::write(&output_path, transformed)?;
             for tag in hashtags.into_iter() {
                 let entry = map.entry(tag.clone()).or_insert(HashSet::new());
-                entry.insert((path.file_stem().unwrap().to_string_lossy().to_string(), title.clone()));
+                entry.insert((
+                    document::PageId(path.file_stem().unwrap().to_string_lossy().to_string()),
+                    title.clone(),
+                ));
             }
             Ok(())
         })
@@ -48,12 +53,15 @@ fn publish_output() -> io::Result<()> {
             let json = serde_json::json!({
                 "wiki": paths.into_iter().map(|s| {
                     let mut entry = HashMap::new();
-                    entry.insert("id", s.0);
-                    entry.insert("title", s.1);
+                    entry.insert("id", s.0.0);
+                    entry.insert("title", s.1.0);
                     entry
                 }).collect::<Vec<_>>()
             });
-            let output_path = Path::new(OUTPUT_DIRECTORY).join("hashtag").join(&tag.0[1..]).with_extension("json");
+            let output_path = Path::new(OUTPUT_DIRECTORY)
+                .join("hashtag")
+                .join(&tag.0[1..])
+                .with_extension("json");
             fs::write(&output_path, json.to_string())?;
             Ok(())
         })
@@ -71,11 +79,17 @@ mod tests {
     use std::fs;
     use std::path::Path;
 
-    use crate::publishing::{INPUT_DIRECTORY, OUTPUT_DIRECTORY, prepare_output_directory, publish_output};
+    use crate::publishing::{
+        prepare_output_directory, publish_output, INPUT_DIRECTORY, OUTPUT_DIRECTORY,
+    };
 
     #[test]
     fn publishes_all_wiki_files() {
-        let count_output = || fs::read_dir(Path::new(OUTPUT_DIRECTORY).join("wiki")).unwrap().count();
+        let count_output = || {
+            fs::read_dir(Path::new(OUTPUT_DIRECTORY).join("wiki"))
+                .unwrap()
+                .count()
+        };
         let count_input = || fs::read_dir(INPUT_DIRECTORY).unwrap().count();
 
         prepare_output_directory().unwrap();
