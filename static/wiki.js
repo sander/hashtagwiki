@@ -23,7 +23,6 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
       if (response.status === 200) {
         const { wiki } = await response.json();
         const ownId = location.pathname.match("([^/.]+)(\\.[^.]+)?$")[1];
-        console.log({ ownId });
         const otherPages = wiki.filter(({ id }) => id !== ownId);
 
         popup.classList.remove("hashtag__popup--loading");
