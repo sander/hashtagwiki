@@ -1,4 +1,4 @@
-use pulldown_cmark::{CowStr, Event, html, Options, Parser, Tag};
+use pulldown_cmark::{html, CowStr, Event, Options, Parser, Tag};
 use regex::Regex;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
@@ -7,15 +7,19 @@ pub(crate) struct HashTag(pub String);
 fn parse_hash_tag(mut callback: impl FnMut(HashTag)) -> impl FnMut(Event) -> Vec<Event> {
     let mut in_a_link = false;
     move |event| match (event, in_a_link) {
-        (Event::Text(s), false) => {
-            extract_hashtags(&s).into_iter().map(|t| match t {
+        (Event::Text(s), false) => extract_hashtags(&s)
+            .into_iter()
+            .map(|t| match t {
                 Parsed::ParsedText(s) => Event::Text(CowStr::from(s.to_string())),
                 Parsed::ParsedHashTag(h) => {
                     callback(HashTag(h.to_string()));
-                    Event::Html(CowStr::from(format!("<span property=\"dc:references\">{}</span>", h.to_string())))
+                    Event::Html(CowStr::from(format!(
+                        "<span property=\"dc:references\">{}</span>",
+                        h.to_string()
+                    )))
                 }
-            }).collect()
-        }
+            })
+            .collect(),
         (e @ Event::Start(Tag::Link(_, _, _)), false) => {
             in_a_link = true;
             vec![e]
@@ -28,11 +32,12 @@ fn parse_hash_tag(mut callback: impl FnMut(HashTag)) -> impl FnMut(Event) -> Vec
     }
 }
 
-fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item=Event> {
+fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item = Event> {
     let options = Options::empty();
     Parser::new_ext(input, options).flat_map(parse_hash_tag(callback))
 }
 
+#[derive(Clone)]
 pub(crate) struct PageId(pub String);
 
 pub(crate) fn transform(input: &str, page_id: PageId) -> (String, Vec<HashTag>) {
@@ -41,7 +46,8 @@ pub(crate) fn transform(input: &str, page_id: PageId) -> (String, Vec<HashTag>) 
 <html prefix=\"dc: http://purl.org/dc/elements/1.1/\">
 <meta charset=\"utf-8\">
 <link rel=\"stylesheet\" href=\"../static/wiki.css\">
-<title>");
+<title>",
+    );
     out.push_str(&title(input));
     out.push_str("</title>\n<nav class=\"toolbar\"><p><a href=\"https://github.com/sander/hashtagwiki/edit/main/wiki/");
     out.push_str(&page_id.0);
@@ -58,9 +64,9 @@ pub(crate) fn title(s: &str) -> String {
     match regex.captures(s) {
         Some(m) => match m.name("title").unwrap().as_str() {
             "" => String::from("Untitled"),
-            s => String::from(s)
+            s => String::from(s),
         },
-        None => String::from("Untitled")
+        None => String::from("Untitled"),
     }
 }
 
@@ -77,7 +83,9 @@ fn extract_hashtags(s: &str) -> Vec<Parsed> {
 
     for mat in regex.find_iter(s) {
         if last_index_in_result != mat.start() {
-            result.push(Parsed::ParsedText(CowStr::from(&s[last_index_in_result..mat.start()])));
+            result.push(Parsed::ParsedText(CowStr::from(
+                &s[last_index_in_result..mat.start()],
+            )));
         }
         result.push(Parsed::ParsedHashTag(CowStr::from(mat.as_str())));
         last_index_in_result = mat.end();
@@ -92,17 +100,29 @@ fn extract_hashtags(s: &str) -> Vec<Parsed> {
 mod tests {
     use pulldown_cmark::CowStr;
 
-    use crate::document::{extract_hashtags, HashTag, PageId, Parsed, title, transform};
+    use crate::document::{extract_hashtags, title, transform, HashTag, PageId, Parsed};
 
     #[test]
     fn can_extract_hashtags() {
         let s = "foo #bar #baz qux";
         let tokens = extract_hashtags(s);
-        assert_eq!(tokens.get(0), Some(&Parsed::ParsedText(CowStr::from("foo "))));
-        assert_eq!(tokens.get(1), Some(&Parsed::ParsedHashTag(CowStr::from("#bar"))));
+        assert_eq!(
+            tokens.get(0),
+            Some(&Parsed::ParsedText(CowStr::from("foo ")))
+        );
+        assert_eq!(
+            tokens.get(1),
+            Some(&Parsed::ParsedHashTag(CowStr::from("#bar")))
+        );
         assert_eq!(tokens.get(2), Some(&Parsed::ParsedText(CowStr::from(" "))));
-        assert_eq!(tokens.get(3), Some(&Parsed::ParsedHashTag(CowStr::from("#baz"))));
-        assert_eq!(tokens.get(4), Some(&Parsed::ParsedText(CowStr::from(" qux"))));
+        assert_eq!(
+            tokens.get(3),
+            Some(&Parsed::ParsedHashTag(CowStr::from("#baz")))
+        );
+        assert_eq!(
+            tokens.get(4),
+            Some(&Parsed::ParsedText(CowStr::from(" qux")))
+        );
         assert_eq!(tokens.len(), 5);
     }
 
@@ -111,7 +131,10 @@ mod tests {
         let doc = "# #foo\n\nA #link [and](foo) [#link](#bar).";
         let (transformed, hashtags) = transform(doc, PageId(String::from("MyPage")));
         assert_eq!(transformed, "<!doctype html><html prefix=\"dc: http://purl.org/dc/elements/1.1/\">\n<meta charset=\"utf-8\">\n<link rel=\"stylesheet\" href=\"../static/wiki.css\">\n<title>#foo</title>\n<nav class=\"toolbar\"><p><a href=\"https://github.com/sander/hashtagwiki/edit/main/wiki/MyPage.md\">Edit</a></p></nav>\n<h1><span property=\"dc:references\">#foo</span></h1>\n<p>A <span property=\"dc:references\">#link</span> <a href=\"foo\">and</a> <a href=\"#bar\">#link</a>.</p>\n\n<script src=\"../static/wiki.js\"></script>\n<script async src=\"https://platform.twitter.com/widgets.js\"></script>".to_string());
-        assert_eq!(hashtags, vec![HashTag("#foo".to_string()), HashTag("#link".to_string())]);
+        assert_eq!(
+            hashtags,
+            vec![HashTag("#foo".to_string()), HashTag("#link".to_string())]
+        );
     }
 
     #[test]
