@@ -1,5 +1,6 @@
 body {
-  font-family: system-ui;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   background: rgb(255, 250, 230);
   line-height: 1.714;
   margin: 1em;
