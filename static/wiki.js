@@ -22,7 +22,8 @@ const toggleHashtagPopup = async ({ wrapper, popup, name }) => {
       const response = await fetch(`../hashtag/${name.substr(1)}.json`);
       if (response.status === 200) {
         const { wiki } = await response.json();
-        const ownId = location.pathname.match("([^/]+)(\\.[^.]+)?$")[1];
+        const ownId = location.pathname.match("([^/.]+)(\\.[^.]+)?$")[1];
+        console.log({ ownId });
         const otherPages = wiki.filter(({ id }) => id !== ownId);
 
         popup.classList.remove("hashtag__popup--loading");
