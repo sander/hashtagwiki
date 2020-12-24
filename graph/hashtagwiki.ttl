@@ -1,4 +1,3 @@
-@base <urn:uuid:69a04cbe-5ba6-42d3-90e9-f54b8b0f2c93> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 

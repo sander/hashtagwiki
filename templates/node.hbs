@@ -2,7 +2,31 @@
 <meta charset="utf-8">
 <dl>
     {{#each claims}}
-        <dt>{{name}}</dt>
-        <dd>{{value}}</dd>
+        <dt>
+            {{#with predicate}}
+                {{#if (eq type "literal")}}
+                    {{value}}
+                {{/if}}
+                {{#if (eq type "iri")}}
+                    <a href="{{value}}">{{value}}</a>
+                {{/if}}
+                {{#if (eq type "blank")}}
+                    Blank node: {{value}}
+                {{/if}}
+            {{/with}}
+        </dt>
+        <dd>
+            {{#with object}}
+                {{#if (eq type "literal")}}
+                    {{value}}
+                {{/if}}
+                {{#if (eq type "iri")}}
+                    <a href="{{value}}">{{value}}</a>
+                {{/if}}
+                {{#if (eq type "blank")}}
+                    Blank node: {{value}}
+                {{/if}}
+            {{/with}}
+        </dd>
     {{/each}}
 </dl>
