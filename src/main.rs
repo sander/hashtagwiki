@@ -2,6 +2,7 @@ use clap::App;
 
 mod authoring;
 mod document;
+mod graph;
 mod publishing;
 
 #[tokio::main]

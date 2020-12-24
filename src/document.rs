@@ -40,7 +40,7 @@ fn parser(input: &str, callback: impl FnMut(HashTag)) -> impl Iterator<Item = Ev
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub(crate) struct PageId(pub String);
 
-#[derive(Clone, PartialEq, Hash, Eq)]
+#[derive(Clone, PartialEq, Hash, Eq, Debug)]
 pub(crate) struct PageTitle(pub String);
 
 pub(crate) fn transform(input: &str, page_id: PageId) -> (String, Vec<HashTag>) {
@@ -103,7 +103,7 @@ fn extract_hashtags(s: &str) -> Vec<Parsed> {
 mod tests {
     use pulldown_cmark::CowStr;
 
-    use crate::document::{extract_hashtags, title, transform, HashTag, PageId, Parsed};
+    use crate::document::{extract_hashtags, title, transform, HashTag, PageId, PageTitle, Parsed};
 
     #[test]
     fn can_extract_hashtags() {
@@ -142,8 +142,8 @@ mod tests {
 
     #[test]
     fn extracts_title() {
-        assert_eq!(title("# #foo\n\nContent"), "#foo");
-        assert_eq!(title("bar\n\nContent"), "bar");
-        assert_eq!(title(""), "Untitled");
+        assert_eq!(title("# #foo\n\nContent"), PageTitle(String::from("#foo")));
+        assert_eq!(title("bar\n\nContent"), PageTitle(String::from("bar")));
+        assert_eq!(title(""), PageTitle(String::from("Untitled")));
     }
 }
