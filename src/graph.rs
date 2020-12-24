@@ -4,17 +4,11 @@ use rdf::uri;
 use serde::{Serialize, Serializer};
 use serde::ser::{SerializeMap};
 
-#[derive(Serialize, Debug, PartialEq, Eq, Clone)]
-struct Claim {
-    name: String,
-    value: String,
-}
-
 #[derive(Debug, PartialEq, Eq, Clone)]
 struct SerializableNode(rdf::node::Node);
 
 #[derive(Serialize, Debug, PartialEq, Eq, Clone)]
-struct Claimv2 {
+struct Claim {
     predicate: SerializableNode,
     object: SerializableNode,
 }
@@ -41,9 +35,9 @@ impl Serialize for SerializableNode {
     }
 }
 
-fn claims_v2(source: rdf::graph::Graph, uri: rdf::uri::Uri) -> Vec<Claimv2> {
+fn find_claims(source: rdf::graph::Graph, uri: rdf::uri::Uri) -> Vec<Claim> {
     println!("triples: {:?}", source.triples_iter().collect::<Vec<_>>());
-    source.get_triples_with_subject(&rdf::node::Node::UriNode { uri }).into_iter().map(|t| Claimv2 {
+    source.get_triples_with_subject(&rdf::node::Node::UriNode { uri }).into_iter().map(|t| Claim {
         predicate: SerializableNode(t.predicate().clone()),
         object: SerializableNode(t.object().clone()),
     }).collect()
@@ -58,16 +52,16 @@ mod tests {
     use rdf::reader::rdf_parser::RdfParser;
     use serde_json::Map;
 
-    use crate::graph::{Claim, claims_v2};
+    use crate::graph::{Claim, find_claims};
 
     #[test]
-    fn can_parse_rdf_v2() {
+    fn can_render_claims() {
         let file = File::open("graph/hashtagwiki.ttl").expect("Could not open file");
         let reader = io::BufReader::new(file);
         let mut reader = rdf::reader::turtle_parser::TurtleParser::from_reader(reader);
         let graph = reader.decode().expect("Could not parse");
         println!("Graph: {:?}", graph);
-        let c = claims_v2(graph, rdf::uri::Uri::new("#wiki".to_string()));
+        let c = find_claims(graph, rdf::uri::Uri::new("#wiki".to_string()));
         println!("Claims: {:?}", c.clone());
         println!("Claims as JSON: {:?}", to_json(c.clone()).to_string());
 
