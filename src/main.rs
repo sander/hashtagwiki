@@ -1,5 +1,9 @@
 use clap::App;
 
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
+
 mod authoring;
 mod document;
 mod graph;
